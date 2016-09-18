@@ -38,8 +38,8 @@
 
 using namespace std;
 
+int Check_for_operator(char input);
 vector<string> tokenizeCodeStrip(istream& code); // declaration
-int Check_for_operator(string intput);
 
 
 // end of eventual contents of file "Part1Tokenizer.h"
@@ -51,21 +51,22 @@ vector<string> tokenizeCodeStrip(istream& code)
 {
 	//initialize and/or Declare
 	string input;
+	string token;
 	vector<string> v1;
 	int sizeOfString = 0;
-	string token;
 
 	//Save in Auxiliary variable input
 	getline(code, input);
 
 	//measure size
 	sizeOfString=input.length();
-
+	cout<<input<<endl;
 	//Compare String against white space, operator, punctuation, directives
 	for(int i=0; i<sizeOfString; i++)
 	{
 
 		token=token+input[i];
+
 		if(token[0] ==' ')
 		{
 			token="";
@@ -76,23 +77,39 @@ vector<string> tokenizeCodeStrip(istream& code)
 			v1.push_back(token);
 			token="";
 		}
-		else if(input[i] == '=')
+		else if(Check_for_operator(input[i]) ==1 && input[i-1] ==' ')
 		{
-			v1.push_back(token);
-			token="";
-		}
-		else if(input[i] == '+')
-		{
-			v1.push_back(token);
-			token="";
-		}
-		else if(input[i] == ';')
-		{
-			v1.push_back(token);
-			token="";
-		}
 
+			//cout<<token<<endl;
+			v1.push_back(token);
+			token="";
+		}
+		else if(Check_for_operator(input[i])==1 && input[i+1] !=' ')
+		{
+
+			token.pop_back();
+			v1.push_back(token);
+			token=input[i];
+			v1.push_back(token);
+			token="";
+		}
+		else if(input[i] == ';' && input[i-1] ==' ')
+		{
+
+			v1.push_back(token);
+			token="";
+		}
+		else if(input[i] == ';' && input[i-1] !=' ')
+		{
+
+			token.pop_back();
+			v1.push_back(token);
+			token=";";
+			v1.push_back(token);
+			token="";
+		}
 	}
+
 
 	cout<<v1[0]<<endl;
 	cout<<v1[1]<<endl;
@@ -102,18 +119,40 @@ vector<string> tokenizeCodeStrip(istream& code)
 	cout<<v1[5]<<endl;
 
 
+
+
+
+
 	// *** Fill in implementation ***
-	vector<string> answer = {v1[0], v1[1], v1[2], v1[3], v1[4], v1[5]};
+	vector<string> answer = {v1[0], v1[1] ,v1[2], v1[3], v1[4], v1[5]};
+	v1.clear();
 	return answer;
 }
 
 
-int Check_for_operator(string intput)
+int Check_for_operator(char input)
 {
-	int answer=0;
 
+	int boolean=0;
+	int sizeOfarray=0;
+	char operators[] ={'=','+','-','*','/','~','&','^','%'};
 
-	return answer;
+	//measure size
+	sizeOfarray=sizeof(operators);
+	for(int i=0; i<sizeOfarray; i++)
+	{
+		if(operators[i] == input)
+		{
+			boolean=1;
+
+		}
+		else
+		{
+			boolean=0;
+		}
+	}
+
+	return boolean;
 	}
 
 
