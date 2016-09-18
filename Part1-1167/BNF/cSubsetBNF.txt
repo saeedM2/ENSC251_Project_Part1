@@ -1,0 +1,190 @@
+/* ENSC 251 -- Fall 2016 -- Simon Fraser University */
+
+/* This is the Backus-Naur Form (BNF) grammar for the subset of C language that we are going to use for our course project. */
+/* It is derived from sources including:
+       http://www.cs.man.ac.uk/~pjj/bnf/c_syntax.bnf
+*/
+
+/* Here are some tokens that are used by the C-subset grammar. */
+/* Examples of these tokens are described in a separate file. */
+/* Other tokens, such as for punctuators and operators, appear as
+   BNF string literals below in the form 'xx' */
+%token int_const char_const float_const id string enumeration_const
+%%
+
+/* Whitespace is allowed between tokens in the below C-subset grammar. */
+
+/*
+main_body is the main production rule for our BNF. It tells us that:
+- it can have results from decl_list and stat_list in this order
+- if there are no declarations in your code, then it can also have only stat_list
+*/
+
+	main_body      	: decl_list stat_list
+					| stat_list
+					;
+				
+/*
+decl_list production can be thought of as “{declaration}+”, where + means at least one instance
+of declaration rule.
+To successfully parse all the declaration, you should be using a look ahead for next token after
+you have processed one declaration entirely.
+e.g.
+If my input code is
+
+		int a;
+		char b;
+
+Then, after our declaration production rule has completely processed one declaration (int a;), we
+still need to check for next token. If the next token is of “type_spec” class, then it means we have
+one more declaration and we should be calling function representing declaration rule again. But,
+if the next token is not of “type_spec” class, then we can return the results collected so far and
+continue with stat_list.
+*/
+
+	decl_list 		: {declaration}+
+					;
+
+/*
+declaration production rule makes call to the declarator rule and then it checks if declaratory rule
+result is followed by id and ‘;’. It is must that your declaration have all three of these entity to be
+syntactically correct. However, you will not be storing the ‘;’ in Abstract Syntax Tree.
+*/
+
+	declaration : declarator id ';'
+				;
+				
+				
+/*
+declarator production rule checks for the type_spec. If the type spec is followed by ‘*’, then add
+the type_spec object as a child to punctuator object representing ‘*’ and return pointer to ‘*’.
+Otherwise, only return pointer to the type_spec object.
+*/
+
+
+	declarator 	: type_spec '*'
+				| type_spec
+				;
+	
+	type_spec 	: char | int | float
+				;
+				
+				
+/*
+stat_list function can be represented as “{exp_stat}+” where + means at least one instances of “exp_stat”
+production rule.
+*/
+
+
+	stat_list 	: {exp_stat}+
+				;
+				
+
+/*
+exp_stat can have assignment_exp followed by ‘;’
+*/
+
+	exp_stat : assignment_exp ';'
+
+
+/*
+assignment_exp can be represented by "id assignment_operator assignment_exp" - only in this order.
+If the first production rule is not satisfied, then we check for ternary expression
+*/
+
+	assignment_exp  : id assignment_operator assignment_exp
+					| ternary_exp
+					;
+					
+	assignment_operator : '=' | '/=' | '%=' | '+=' | '-=' | '<<='
+						| '>>=' | '&=' | '^=' | '|='
+						;
+
+/*
+The subtree created for this production would have ‘?’ as the root of the subtree – id, assignment_exp, and
+another ternary_exp would become its children.
+If first production rule is not satisfied (id '?' assignment_exp ':' ternary_exp), then it would check for
+shift_expression if ‘?’ has not been encountered yet, else it should give syntax error.
+*/
+
+	ternary_exp : id '?' assignment_exp ':' ternary_exp
+				| shift_expression
+				;
+
+/*
+shift_expression can also be represented as “additive_exp {shift_operator additive_exp}*”
+where * means zero or more instances of {shift_operator additive_exp}
+*/
+
+	shift_expression : additive_exp {shift_operator additive_exp}*
+					 ;
+					 
+	shift_operator   : '<<' | '>>'
+					 ;
+
+
+/*
+additive_exp can also be represented as “div_exp {additive_operator div_exp}*”
+where * means zero or more instances of { additive_operator div_exp }
+*/
+
+	additive_exp 	: div_exp {additive_operator div_exp}*
+					;
+					
+	additive_operator : '+' | '-'
+					  ;
+
+/*
+div_exp can also be represented as “unary_exp {div_operator unary_exp}*”
+where * means zero or more instances of { div_operator unary_exp }
+*/
+
+	div_exp : unary_exp {div_operator unary_exp}*
+			;
+			
+	div_operator : '/' | '%'
+				 ;
+				 
+/*
+unary_exp production rule first checks for unary_operator, if the token is unary_operator then
+unary_exp calls itself recursively. But, if the token is not unary_operator, then it checks for the
+postfix_exp.
+*/
+	unary_exp 		: unary_operator unary_exp
+					| postfix_exp
+					;
+	
+	unary_operator  : '~' | '!'
+				    ;
+				   
+				   
+/*
+After checking for the primary expression and retrieving its sub tree, you can check for postfix operator. If there exists a postfix operator;
+then it becomes the root of the subtree with primary expression as a child. 
+*/
+
+	postfix_exp : primary_exp postfix_operator
+				| primary_exp 
+				;
+				
+	postfix_operator : '++' | '--'
+					 ;
+					 
+	primary_exp : id
+				| const
+				| string
+				| '(' exp ')'
+				;
+				
+	const	 	: int_const
+				| char_const
+				| float_const
+				;
+
+
+
+  
+
+
+
+
