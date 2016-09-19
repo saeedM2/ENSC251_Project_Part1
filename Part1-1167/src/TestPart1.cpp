@@ -83,11 +83,13 @@ BOOST_AUTO_TEST_CASE( test3 )
 			,{"char", "*","str",";", "str","=","\"string test.\"",";"});
 }
 
+
 BOOST_AUTO_TEST_CASE( test4 )
 {
 	testTokenStrings(" str    =    \"  x  \"     \"  +  \"     \"  \"    ; ",
 			         {"str", "=", "\"  x  \"",  "\"  +  \"",  "\"  \"", ";"});
 }
+
 
 BOOST_AUTO_TEST_CASE( test5 )
 {
