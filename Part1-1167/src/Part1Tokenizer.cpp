@@ -41,7 +41,7 @@ using namespace std;
 int Check_for_operator(char element);
 int Check_for_punctuation(char element);
 int Check_for_special_operator(char elementBefore, char element, char elementAfter);
-string String_inside_Quotation(string input, int* index);
+string String_inside_Quotation(string input, int *index);
 
 vector<string> tokenizeCodeStrip(istream& code); // declaration
 
@@ -110,8 +110,11 @@ vector<string> tokenizeCodeStrip(istream& code)
 		}
 		else if(Check_for_punctuation(input[i]) ==1 && input[i-1] !=' ')
 		{
-			token.pop_back();
-			v1.push_back(token);
+			if(input[i-1] !='"')
+			{
+				token.pop_back();
+				v1.push_back(token);
+			}
 			token=input[i];
 			v1.push_back(token);
 			token="";
@@ -183,11 +186,12 @@ int Check_for_punctuation(char element)
 	}
 		return boolean;
 	}
-string String_inside_Quotation(string input, int* index)
+string String_inside_Quotation(string input, int *index)
 {
 	int counter=0;
 	string token;
-	for(int i=0; i<input.length(); i++)
+	unsigned sizeOfString=input.length();
+	for(int i=0; i < sizeOfString; i++)
 	{
 		if(input[i]=='"')
 		{
@@ -202,10 +206,11 @@ string String_inside_Quotation(string input, int* index)
 			token=token+input[i];
 			*index=i;
 			return token;
+			token="";
 			break;
 		}
 	}
-	token="";
+
 	}
 
 
