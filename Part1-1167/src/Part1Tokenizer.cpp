@@ -38,7 +38,8 @@
 
 using namespace std;
 
-int Check_for_operator(char input);
+int Check_for_operator(char element);
+int Check_for_punctuation(char element);
 vector<string> tokenizeCodeStrip(istream& code); // declaration
 
 
@@ -79,14 +80,12 @@ vector<string> tokenizeCodeStrip(istream& code)
 		}
 		else if(Check_for_operator(input[i]) ==1 && input[i-1] ==' ')
 		{
-
 			//cout<<token<<endl;
 			v1.push_back(token);
 			token="";
 		}
 		else if(Check_for_operator(input[i])==1 && input[i+1] !=' ')
 		{
-
 			token.pop_back();
 			v1.push_back(token);
 			token=input[i];
@@ -95,13 +94,11 @@ vector<string> tokenizeCodeStrip(istream& code)
 		}
 		else if(input[i] == ';' && input[i-1] ==' ')
 		{
-
 			v1.push_back(token);
 			token="";
 		}
 		else if(input[i] == ';' && input[i-1] !=' ')
 		{
-
 			token.pop_back();
 			v1.push_back(token);
 			token=";";
@@ -130,7 +127,7 @@ vector<string> tokenizeCodeStrip(istream& code)
 }
 
 
-int Check_for_operator(char input)
+int Check_for_operator(char element)
 {
 
 	int boolean=0;
@@ -141,14 +138,9 @@ int Check_for_operator(char input)
 	sizeOfarray=sizeof(operators);
 	for(int i=0; i<sizeOfarray; i++)
 	{
-		if(operators[i] == input)
+		if(operators[i] == element)
 		{
 			boolean=1;
-
-		}
-		else
-		{
-			boolean=0;
 		}
 	}
 
