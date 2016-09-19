@@ -41,6 +41,8 @@ using namespace std;
 int Check_for_operator(char element);
 int Check_for_punctuation(char element);
 int Check_for_special_operator(char elementBefore, char element, char elementAfter);
+string String_inside_Quotation(string input, int* index);
+
 vector<string> tokenizeCodeStrip(istream& code); // declaration
 
 
@@ -78,6 +80,12 @@ vector<string> tokenizeCodeStrip(istream& code)
 		else if(input[i] == ' ')
 		{
 			token.pop_back();
+			v1.push_back(token);
+			token="";
+		}
+		else if(input[i] == '"')
+		{
+			token=String_inside_Quotation(input, &i);
 			v1.push_back(token);
 			token="";
 		}
@@ -121,18 +129,13 @@ vector<string> tokenizeCodeStrip(istream& code)
 
 	v1.clear();
 	return answer;
-
-
 }
-
-
 int Check_for_operator(char element)
 {
 
 	int boolean=0;
 	int sizeOfarray=0;
 	char operators[] ={'=','+','-','*','/','~','&','^','%', '<','>'};
-
 	//measure size
 	sizeOfarray=sizeof(operators);
 	for(int i=0; i<sizeOfarray; i++)
@@ -142,7 +145,6 @@ int Check_for_operator(char element)
 			boolean=1;
 		}
 	}
-
 	return boolean;
 	}
 int Check_for_special_operator(char elementBefore, char element, char elementAfter)
@@ -150,7 +152,6 @@ int Check_for_special_operator(char elementBefore, char element, char elementAft
 	int boolean=0;
 	int sizeOfarray=0;
 	char special_operator[] ={'=','+','-','*','/','~','&','^','%', '<','>'};//* is multiplication or indirection operator depending on context
-
 	//measure size
 	sizeOfarray=sizeof(special_operator);
 	for(int i=0; i<sizeOfarray; i++)
@@ -171,7 +172,6 @@ int Check_for_punctuation(char element)
 	int boolean=0;
 	int sizeOfarray=0;
 	char punctuation[] ={'(', ')',':',';','*'};//* is multiplication or indirection operator depending on context
-
 	//measure size
 	sizeOfarray=sizeof(punctuation);
 	for(int i=0; i<sizeOfarray; i++)
@@ -181,10 +181,32 @@ int Check_for_punctuation(char element)
 			boolean=1;
 		}
 	}
-
 		return boolean;
 	}
-
+string String_inside_Quotation(string input, int* index)
+{
+	int counter=0;
+	string token;
+	for(int i=0; i<input.length(); i++)
+	{
+		if(input[i]=='"')
+		{
+			counter++;
+		}
+		if(counter==1)
+		{
+			token=token+input[i];
+		}
+		if(counter==2)
+		{
+			token=token+input[i];
+			*index=i;
+			return token;
+			break;
+		}
+	}
+	token="";
+	}
 
 
 
