@@ -40,6 +40,7 @@ using namespace std;
 
 int Check_for_operator(char element);
 int Check_for_punctuation(char element);
+int Check_for_special_operator(char elementBefore, char element, char elementAfter);
 vector<string> tokenizeCodeStrip(istream& code); // declaration
 
 
@@ -54,7 +55,9 @@ vector<string> tokenizeCodeStrip(istream& code)
 	string input;
 	string token;
 	vector<string> v1;
+	vector<string> answer;
 	int sizeOfString = 0;
+	int sizeofV1=0;
 
 	//Save in Auxiliary variable input
 	getline(code, input);
@@ -92,38 +95,34 @@ vector<string> tokenizeCodeStrip(istream& code)
 			v1.push_back(token);
 			token="";
 		}
-		else if(input[i] == ';' && input[i-1] ==' ')
+		else if(Check_for_punctuation(input[i]) ==1 && input[i-1] ==' ')
 		{
 			v1.push_back(token);
 			token="";
 		}
-		else if(input[i] == ';' && input[i-1] !=' ')
+		else if(Check_for_punctuation(input[i]) ==1 && input[i-1] !=' ')
 		{
 			token.pop_back();
 			v1.push_back(token);
-			token=";";
+			token=input[i];
 			v1.push_back(token);
 			token="";
 		}
 	}
+	sizeofV1=v1.size();
 
+	//stream out to be tested by TestPart1
+	for(int i=0; i< sizeofV1 ; i++)
+	{
+		cout<<v1[i]<<endl;
+		answer.push_back(v1[i]);
 
-	cout<<v1[0]<<endl;
-	cout<<v1[1]<<endl;
-	cout<<v1[2]<<endl;
-	cout<<v1[3]<<endl;
-	cout<<v1[4]<<endl;
-	cout<<v1[5]<<endl;
+	}
 
-
-
-
-
-
-	// *** Fill in implementation ***
-	vector<string> answer = {v1[0], v1[1] ,v1[2], v1[3], v1[4], v1[5]};
 	v1.clear();
 	return answer;
+
+
 }
 
 
@@ -132,7 +131,7 @@ int Check_for_operator(char element)
 
 	int boolean=0;
 	int sizeOfarray=0;
-	char operators[] ={'=','+','-','*','/','~','&','^','%'};
+	char operators[] ={'=','+','-','*','/','~','&','^','%', '<','>'};
 
 	//measure size
 	sizeOfarray=sizeof(operators);
@@ -145,6 +144,45 @@ int Check_for_operator(char element)
 	}
 
 	return boolean;
+	}
+int Check_for_special_operator(char elementBefore, char element, char elementAfter)
+{
+	int boolean=0;
+	int sizeOfarray=0;
+	char special_operator[] ={'=','+','-','*','/','~','&','^','%', '<','>'};//* is multiplication or indirection operator depending on context
+
+	//measure size
+	sizeOfarray=sizeof(special_operator);
+	for(int i=0; i<sizeOfarray; i++)
+	{
+		if(special_operator[i] == element && special_operator[i-1] == elementBefore)
+		{
+			boolean=1;
+		}
+		else if(special_operator[i] == element && special_operator[i-1] ==elementAfter)
+		{
+			boolean=1;
+		}
+	}
+	return boolean;
+	}
+int Check_for_punctuation(char element)
+{
+	int boolean=0;
+	int sizeOfarray=0;
+	char punctuation[] ={'(', ')',':',';','*'};//* is multiplication or indirection operator depending on context
+
+	//measure size
+	sizeOfarray=sizeof(punctuation);
+	for(int i=0; i<sizeOfarray; i++)
+	{
+		if(punctuation[i] == element)
+		{
+			boolean=1;
+		}
+	}
+
+		return boolean;
 	}
 
 
