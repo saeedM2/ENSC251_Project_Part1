@@ -65,7 +65,7 @@ void testTokenStrings(string codeString, vector<string> desiredTokenVector)
 
 }
 
-BOOST_AUTO_TEST_CASE( test1 )
+/*BOOST_AUTO_TEST_CASE( test1 )
 {
 	testTokenStrings("sum = a + 10 ;",
 			{"sum","=","a","+","10",";"});
@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE( test4 )
 {
 	testTokenStrings(" str    =    \"  x  \"     \"  +  \"     \"  \"    ; ",
 			         {"str", "=", "\"  x  \"",  "\"  +  \"",  "\"  \"", ";"});
-}
+}*/
 
 
 BOOST_AUTO_TEST_CASE( test5 )
@@ -97,6 +97,7 @@ BOOST_AUTO_TEST_CASE( test5 )
 			{"i","++","+","j",";"});
 }
 
+/*
 BOOST_AUTO_TEST_CASE( test6 )
 {
 	testTokenStrings("#define MY_DEFINE \n int i;",
@@ -114,7 +115,7 @@ BOOST_AUTO_TEST_CASE( test7 )
 }
 
 // below demonstrates a bug in one of our libraries
-/*
+
 BOOST_AUTO_TEST_CASE( test7bug )
 {
     // the comment below shows what's in memory (but with extra whitespace
@@ -124,7 +125,7 @@ BOOST_AUTO_TEST_CASE( test7bug )
 	testTokenStrings(  "#define MYDEFINE \r\n str    =    \"\\\"\"    \"+\"    \"\"    ; ",
 										  {  "str", "=", "\"\\\"\"", "\"+\"", "\"\"", ";"});
 }
-*/
+
 
 BOOST_AUTO_TEST_CASE( test8 )
 {
@@ -157,4 +158,5 @@ BOOST_AUTO_TEST_CASE( test12 )
 	testTokenStrings("str = \"Hello World out there ; \n str++;",
 			{"str","=","","str","++",";"});
 }
+*/
 
