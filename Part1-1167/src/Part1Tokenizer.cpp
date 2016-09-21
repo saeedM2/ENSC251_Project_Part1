@@ -113,10 +113,11 @@ vector<string> tokenizeCodeStrip(istream& code)
 		else if((boolean=Special_check(input,i)) > 1)
 		{
 			//token.pop_back();
-			cout<<token<<endl;
+			//cout<<token<<endl;
 			special_string=Check_for_special_operator(input, &i, boolean, &size_sub_string);
-			v1.push_back(special_string);
+			cout<<special_string<<endl;
 			v1.push_back(token);
+			v1.push_back(special_string);
 			token="";
 
 			//v1.erase(v1.begin() + 0);
@@ -171,6 +172,7 @@ string Check_for_special_operator(string element,int *index, int boolean, int *s
 {
 	int i=*index;
 	int count=0;
+	int index2=0;
 	int sizeOfarrayChar=0;
 	int sizeOfelement=0;
 	int sizeOfarrayString=0;
@@ -181,32 +183,39 @@ string Check_for_special_operator(string element,int *index, int boolean, int *s
 	sizeOfarrayChar=sizeof(special_operator_char);
 	sizeOfelement=element.length();
 	sizeOfarrayString=sizeof(special_operator_string)/sizeof(special_operator_string[0]);
-
+	for(int u=0; u<sizeOfarrayChar; u++)
+	{
+		index2=element.find_first_of(special_operator_char[u]);
+		if(index2 !=-1)
+		{
+			break;
+		}
+	}
+	i=index2;
 	if(boolean == 2)
 	{
 		special_string=special_string+element[i];
 		special_string=special_string+element[i+1];
-		i=*index+1;
+		i=index2+1;
 	}
 	else if(boolean == 3)
 	{
 		special_string=special_string+element[i];
 		special_string=special_string+element[i+1];
 		special_string=special_string+element[i+2];
+		i=index2+2;
 
 		for(int j=0; j < sizeOfarrayString; j++)
 		{
 			if( special_string != special_operator_string[j] )
 			{
 				count++;
-				*size_sub_string=3;
-				i=*index;
 			}
 		}
 		if(count == sizeOfarrayString)
 		{
 			special_string.pop_back();
-			i=*index+2;
+			i=index2+1;
 		}
 	}
 	*index=i;

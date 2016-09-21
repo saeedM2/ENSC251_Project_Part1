@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE( test4 )
 
 BOOST_AUTO_TEST_CASE( test5 )
 {
-	testTokenStrings("i+==j;",
+	testTokenStrings("i+++j;",
 			{"i","++","+","j",";"});
 }
 
