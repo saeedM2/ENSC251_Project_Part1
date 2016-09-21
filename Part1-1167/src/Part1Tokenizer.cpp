@@ -41,7 +41,7 @@ using namespace std;
 int Check_for_operator(char element);
 int Check_for_punctuation(char element);
 int Special_check(string element,int index);
-string Check_for_special_operator(string element,int *index);
+string Check_for_special_operator(string element,int *index, int boolean, int *size_sub_string);
 string String_inside_Quotation(string input, int *index);
 
 vector<string> tokenizeCodeStrip(istream& code); // declaration
@@ -63,6 +63,8 @@ vector<string> tokenizeCodeStrip(istream& code)
 	vector<string> answer;
 	int sizeOfString = 0;
 	int sizeofV1=0;
+	int boolean=0;
+	int size_sub_string=0;
 
 	//Save in Auxiliary variable input
 	getline(code, input);
@@ -94,6 +96,7 @@ vector<string> tokenizeCodeStrip(istream& code)
 			//cout<<token<<endl;
 			v1.push_back(token);
 			token="";
+
 		}
 		else if(Check_for_operator(input[i])==1 && input[i+1] !=' ' && Special_check(input,i) == -1)
 		{
@@ -103,22 +106,21 @@ vector<string> tokenizeCodeStrip(istream& code)
 				v1.push_back(token);
 			}
 			token=input[i];
+
 			v1.push_back(token);
 			token="";
 		}
-		else if(Special_check(input,i) == 1)
+		else if((boolean=Special_check(input,i)) > 1)
 		{
-			special_string=Check_for_special_operator(input, &i);
-/*			if(special_string.length() ==3)
-			{
-				i=i+2;
-			}
-			if(special_string.length() ==2)
-			{
-				i=i+1;
-			}*/
+			//token.pop_back();
+			cout<<token<<endl;
+			special_string=Check_for_special_operator(input, &i, boolean, &size_sub_string);
 			v1.push_back(special_string);
+			v1.push_back(token);
 			token="";
+
+			//v1.erase(v1.begin() + 0);
+
 		}
 		else if(Check_for_punctuation(input[i]) ==1 && input[i-1] ==' ')
 		{
@@ -138,11 +140,12 @@ vector<string> tokenizeCodeStrip(istream& code)
 		}
 	}
 
-	sizeofV1=v1.size();
 	//stream out to be tested by TestPart1
+	//v1.erase( v1.begin() + 0);
+	sizeofV1=v1.size();
 	for(int i=0; i< sizeofV1 ; i++)
 	{
-		cout<<v1[i]<<endl;
+		//cout<<v1[i]<<endl;
 		answer.push_back(v1[i]);
 	}
 	v1.clear();
@@ -164,45 +167,50 @@ int Check_for_operator(char element)
 	}
 	return boolean;
 }
-string Check_for_special_operator(string element,int *index)
+string Check_for_special_operator(string element,int *index, int boolean, int *size_sub_string)
 {
-	int count=*index;
-	int boolean=0;
+	int i=*index;
+	int count=0;
 	int sizeOfarrayChar=0;
 	int sizeOfelement=0;
 	int sizeOfarrayString=0;
 	char special_operator_char[]={'=','+','-','*','/','~','&','^','%', '<','>', '|'};//* is multiplication or indirection operator depending on context
 	string special_operator_string[] = {"++","--","+=", "-=","*=","==","/=",">>=","<<=","&=","^=","|="};
-	string special_string;
-
+	string special_string="";
 	//measure size
 	sizeOfarrayChar=sizeof(special_operator_char);
-	sizeOfelement=sizeof(element);
-	sizeOfarrayString=sizeof(special_operator_string);
+	sizeOfelement=element.length();
+	sizeOfarrayString=sizeof(special_operator_string)/sizeof(special_operator_string[0]);
 
-	for(int i=*index; i<sizeOfelement; i++)
+	if(boolean == 2)
+	{
+		special_string=special_string+element[i];
+		special_string=special_string+element[i+1];
+		i=*index+1;
+	}
+	else if(boolean == 3)
+	{
+		special_string=special_string+element[i];
+		special_string=special_string+element[i+1];
+		special_string=special_string+element[i+2];
+
+		for(int j=0; j < sizeOfarrayString; j++)
 		{
-			for(int j=0; j<sizeOfarrayChar; j++)
+			if( special_string != special_operator_string[j] )
 			{
-				if(element[i] == special_operator_char[j])
-				{
-					special_string=special_string+element[i];
-				}
-				if((count-*index) >= 3)
-				{
-					for(int k=0; k<sizeOfarrayString; k++)
-					{
-						if(special_operator_string [k] !=special_string)
-						{
-							special_string.pop_back();
-						}
-					}
-					return special_string;
-				}
-
+				count++;
+				*size_sub_string=3;
+				i=*index;
 			}
-			count++;
 		}
+		if(count == sizeOfarrayString)
+		{
+			special_string.pop_back();
+			i=*index+2;
+		}
+	}
+	*index=i;
+	return special_string;
 }
 int Check_for_punctuation(char element)
 {
@@ -246,34 +254,52 @@ string String_inside_Quotation(string input, int *index)
 }
 int Special_check(string element,int index)
 {
+
 	int special_operator_falg=0;
 	int boolean=0;
+	int count=0;
+	int count_index=0;
 	int sizeOfarray=0;
 	int sizeOfelement=0;
+	int i=index;
+	int difference_check=index;
 	char special_operator_char[] ={'=','+','-','*','/','~','&','^','%', '<','>', '|'};//* is multiplication or indirection operator depending on context
 
 	sizeOfarray=sizeof(special_operator_char);
-	sizeOfelement=sizeof(element);
+	sizeOfelement=element.length();
 
-	for(int i=index; i<sizeOfelement; i++)
+	while((i < sizeOfelement) && (i-index) < 3)
 	{
 		for(int j=0; j<sizeOfarray; j++)
 		{
-			if(element[i]==special_operator_char[j] )//need to fix this to include guard against =+, +-, =& and etc.Because these pass but shoudent
-			{
-				special_operator_falg++;
-			}
-			else if(element[i]!=special_operator_char[j] )
-			{
-				 boolean= -1;
-				 return boolean;
-			}
-			else if (special_operator_falg > 1)
-			{
-				boolean= 1;
-				return boolean;
-			}
+				//cout<<i-index<<endl;
+				if(element[i] == special_operator_char[j])//need to fix this to include guard against =+, +-, =& and etc.Because these pass but shoudent
+				{
+					special_operator_falg++;
+				}
+				else if (element[i] != special_operator_char[j] )
+				{
+					count++;
+					if(count >= sizeOfarray && special_operator_falg==1)
+					{
+						 special_operator_falg=0;
+					}
+				}
+				if(special_operator_falg == 2)
+				{
+					boolean=2;
+				}
+				else if(special_operator_falg == 3)
+				{
+					boolean=3;
+				}
+				else if(special_operator_falg==0)
+				{
+					boolean=-1;
+				}
 		}
+		count=0;
+		i++;
 	}
-
+	return boolean;
 }

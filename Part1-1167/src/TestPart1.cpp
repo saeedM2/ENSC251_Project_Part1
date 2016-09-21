@@ -65,7 +65,8 @@ void testTokenStrings(string codeString, vector<string> desiredTokenVector)
 
 }
 
-/*BOOST_AUTO_TEST_CASE( test1 )
+
+BOOST_AUTO_TEST_CASE( test1 )
 {
 	testTokenStrings("sum = a + 10 ;",
 			{"sum","=","a","+","10",";"});
@@ -76,6 +77,7 @@ BOOST_AUTO_TEST_CASE( test2 )
 	testTokenStrings("sum=a+10;",
 			{"sum","=","a","+","10",";"});
 }
+
 
 BOOST_AUTO_TEST_CASE( test3 )
 {
@@ -88,16 +90,18 @@ BOOST_AUTO_TEST_CASE( test4 )
 {
 	testTokenStrings(" str    =    \"  x  \"     \"  +  \"     \"  \"    ; ",
 			         {"str", "=", "\"  x  \"",  "\"  +  \"",  "\"  \"", ";"});
-}*/
+}
+
 
 
 BOOST_AUTO_TEST_CASE( test5 )
 {
-	testTokenStrings("i+++j;",
+	testTokenStrings("i+==j;",
 			{"i","++","+","j",";"});
 }
 
-/*
+
+
 BOOST_AUTO_TEST_CASE( test6 )
 {
 	testTokenStrings("#define MY_DEFINE \n int i;",
@@ -158,5 +162,5 @@ BOOST_AUTO_TEST_CASE( test12 )
 	testTokenStrings("str = \"Hello World out there ; \n str++;",
 			{"str","=","","str","++",";"});
 }
-*/
+
 
