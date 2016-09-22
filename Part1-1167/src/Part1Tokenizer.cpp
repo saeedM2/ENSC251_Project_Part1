@@ -140,7 +140,6 @@ vector<string> tokenizeCodeStrip(istream& code)
 			token="";
 		}
 	}
-
 	//stream out to be tested by TestPart1
 	//v1.erase( v1.begin() + 0);
 	sizeofV1=v1.size();
@@ -241,7 +240,7 @@ string String_inside_Quotation(string input, int *index)
 {
 	int counter=0;
 	string token="";
-	unsigned sizeOfString=input.length();
+	unsigned int sizeOfString=input.length();
 	for(unsigned int i=*index; i < sizeOfString; i++)
 	{
 		if(input[i]=='"')
