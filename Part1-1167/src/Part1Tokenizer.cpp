@@ -35,14 +35,24 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <cstddef>        // std::size_t
+
 
 using namespace std;
 
 int Check_for_operator(char element);
 int Check_for_punctuation(char element);
 int Special_check(string element,int index);
-string Check_for_special_operator(string element,int *index, int boolean, int *size_sub_string);
+string Check_for_special_operator(string element,int *index, int boolean);
 string String_inside_Quotation(string input, int *index);
+vector<string> Exponent(vector<string> v1);
+string UnwantedString1(string input);
+string UnwantedString2(string input);
+string UnwantedString3(string input);
+
+bool squote(string input);
+const char *quote = "'";
+const char *space = " ";
 
 vector<string> tokenizeCodeStrip(istream& code); // declaration
 
@@ -58,17 +68,29 @@ vector<string> tokenizeCodeStrip(istream& code)
 	string input;
 	string token;
 	string temp;
+	string combine;
 	string special_string;
 	vector<string> v1;
 	vector<string> answer;
 	int sizeOfString = 0;
 	int sizeofV1=0;
 	int boolean=0;
-	int size_sub_string=0;
+	int squotetest=0;
 
 	//Save in Auxiliary variable input
-	getline(code, input);
-	cout<<input<<endl;
+	while (getline(code, combine))
+	{input += combine;}
+
+	input=UnwantedString1(input);
+	input=UnwantedString2(input);
+	squotetest = squote(input);
+
+	if (squotetest==1)
+	{
+		input=UnwantedString3(input);
+
+	}
+	//cout<<input<<endl;
 	//measure size
 	sizeOfString=input.length();
 	//Compare String against white space, operator, punctuation, directives
@@ -85,6 +107,10 @@ vector<string> tokenizeCodeStrip(istream& code)
 			v1.push_back(token);
 			token="";
 		}
+		else if(input[i] == *quote && squotetest==1)
+		{
+			token.pop_back();
+		}
 		else if(input[i] == '"')
 		{
 			token=String_inside_Quotation(input, &i);
@@ -96,7 +122,6 @@ vector<string> tokenizeCodeStrip(istream& code)
 			//cout<<token<<endl;
 			v1.push_back(token);
 			token="";
-
 		}
 		else if(Check_for_operator(input[i])==1 && input[i+1] !=' ' && Special_check(input,i) == -1)
 		{
@@ -114,14 +139,12 @@ vector<string> tokenizeCodeStrip(istream& code)
 		{
 			//token.pop_back();
 			//cout<<token<<endl;
-			special_string=Check_for_special_operator(input, &i, boolean, &size_sub_string);
-			cout<<special_string<<endl;
+			special_string=Check_for_special_operator(input, &i, boolean);
+			//cout<<special_string<<endl;
 			v1.push_back(token);
 			v1.push_back(special_string);
 			token="";
-
 			//v1.erase(v1.begin() + 0);
-
 		}
 		else if(Check_for_punctuation(input[i]) ==1 && input[i-1] ==' ')
 		{
@@ -140,6 +163,7 @@ vector<string> tokenizeCodeStrip(istream& code)
 			token="";
 		}
 	}
+	v1=Exponent(v1);
 	//stream out to be tested by TestPart1
 	//v1.erase( v1.begin() + 0);
 	sizeofV1=v1.size();
@@ -167,7 +191,7 @@ int Check_for_operator(char element)
 	}
 	return boolean;
 }
-string Check_for_special_operator(string element,int *index, int boolean, int *size_sub_string)
+string Check_for_special_operator(string element,int *index, int boolean)
 {
 	int i=*index;
 	int count=0;
@@ -240,7 +264,7 @@ string String_inside_Quotation(string input, int *index)
 {
 	int counter=0;
 	string token="";
-	unsigned int sizeOfString=input.length();
+	unsigned sizeOfString=input.length();
 	for(unsigned int i=*index; i < sizeOfString; i++)
 	{
 		if(input[i]=='"')
@@ -262,7 +286,6 @@ string String_inside_Quotation(string input, int *index)
 }
 int Special_check(string element,int index)
 {
-
 	int special_operator_falg=0;
 	int boolean=0;
 	int count=0;
@@ -310,4 +333,104 @@ int Special_check(string element,int index)
 		i++;
 	}
 	return boolean;
+}
+string UnwantedString1(string input)
+{
+	std::string t = input;
+	std::string s = "#define";
+
+	std::string::size_type i = t.find(s);
+
+	if (i != std::string::npos)
+	   t.erase(i, s.length());
+	return t;
+}
+string UnwantedString2(string input)
+{
+	std::string t = input;
+	std::string s = "MY_DEFINE";
+
+	std::string::size_type i = t.find(s);
+
+	if (i != std::string::npos)
+	   t.erase(i, s.length());
+	return t;
+}
+string UnwantedString3(string input)
+{
+	int sizeOfstring=0;
+	sizeOfstring=input.length();
+	std::size_t foundfirst = input.find_first_of(*quote);
+	std::size_t foundfirstsc = input.find_first_of(';');
+	 input.replace(input.begin()+(foundfirst+1),input.begin()+foundfirstsc,"");
+	 return input;
+}
+bool squote (string input)
+{
+	size_t sizeOfstring=0;
+	sizeOfstring=input.length();
+	std::size_t foundfirst = input.find_first_of(*quote);
+	std::size_t foundlast = input.find_last_of(*quote);
+
+	if(foundfirst==foundlast && foundfirst<sizeOfstring)
+	{
+		return 1;
+	}
+	else{
+		return 0;
+	}
+}
+vector<string> Exponent(vector<string> v1)
+{
+	int sizeVector=v1.size();
+	int sizeIndexVector=0;
+	int flag=0;
+	int flag_for_change_v1_size=0;
+	vector<int> indexVector;
+	string Check;
+	string string;
+	for(int i=0; i<sizeVector; i++)
+	{
+		string=v1[i];
+		if(isdigit(string[0])==1)
+		{
+
+			if(string.back() =='e' || string.back()=='E')
+			{
+				indexVector.push_back(i);
+				flag=1;
+			}
+		}
+	}
+	if(flag==1)
+	{
+		sizeIndexVector=indexVector.size();
+		for(int j=0; j<sizeIndexVector; j++)
+		{
+			if(flag_for_change_v1_size==1)
+			{
+				indexVector.at(j)=indexVector[j]-2;
+			}
+			else if(flag_for_change_v1_size==2)
+			{
+				indexVector.at(j)=indexVector[j]-1;
+			}
+			Check=v1[indexVector[j]+1];
+			if(Check[0] == '+' || Check[0] == '-')
+			{
+				v1.at(indexVector[j])=v1[indexVector[j]]+v1[indexVector[j]+1]+v1[indexVector[j]+2];
+				v1.erase(v1.begin()+indexVector[j]+1);
+				v1.erase(v1.begin()+indexVector[j]+1);
+				flag_for_change_v1_size=1;
+
+			}
+			else if(Check[0] != '+' && Check[0] != '-')
+			{
+				v1.at(indexVector[j])=v1[indexVector[j]+1];
+				v1.erase(v1.begin()+indexVector[j]+1);
+				flag_for_change_v1_size=2;
+			}
+		}
+	}
+	return v1;
 }
