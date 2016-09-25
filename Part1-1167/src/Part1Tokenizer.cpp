@@ -43,12 +43,15 @@ using namespace std;
 int Check_for_operator(char element);
 int Check_for_punctuation(char element);
 int Special_check(string element,int index);
-string Check_for_special_operator(string element,int *index, int boolean);
+string Extract_special_operator(string element,int *index, int boolean);
 string String_inside_Quotation(string input, int *index);
 vector<string> Exponent(vector<string> v1);
 string UnwantedString1(string input);
 string UnwantedString2(string input);
 string UnwantedString3(string input);
+string UnwantedString4(string input);
+string unterminated_strings(string input, string *RemoveThis);
+string Remove_All_BackSlash_White_space(string input);
 
 bool squote(string input);
 const char *quote = "'";
@@ -70,6 +73,8 @@ vector<string> tokenizeCodeStrip(istream& code)
 	string temp;
 	string combine;
 	string special_string;
+	string RemoveThis;
+	string RemoveThis2;
 	vector<string> v1;
 	vector<string> answer;
 	int sizeOfString = 0;
@@ -83,13 +88,34 @@ vector<string> tokenizeCodeStrip(istream& code)
 
 	input=UnwantedString1(input);
 	input=UnwantedString2(input);
+	input=UnwantedString4(input);
 	squotetest = squote(input);
 
 	if (squotetest==1)
 	{
 		input=UnwantedString3(input);
-
+		for(unsigned int K=0; K< input.length();K++)
+		{
+			if(input[K]== '\'')
+			{
+				input.at(K)='`';
+				RemoveThis2='`';
+				cout<<endl;
+				cout<<"Warning: You have an unterminated Single Quote String!!"<<endl;
+				cout<<endl;
+			}
+			if(input[K]=='\r')
+			{
+				input.erase(input.begin()+K);
+			}
+			if(input[K]=='\n')
+			{
+				input.erase(input.begin()+K);
+			}
+		}
 	}
+	input=Remove_All_BackSlash_White_space(input);
+	input=unterminated_strings(input,&RemoveThis);
 	//cout<<input<<endl;
 	//measure size
 	sizeOfString=input.length();
@@ -119,7 +145,6 @@ vector<string> tokenizeCodeStrip(istream& code)
 		}
 		else if(Check_for_operator(input[i])==1 && input[i-1] ==' ' && Special_check(input,i) == -1)
 		{
-			//cout<<token<<endl;
 			v1.push_back(token);
 			token="";
 		}
@@ -131,20 +156,15 @@ vector<string> tokenizeCodeStrip(istream& code)
 				v1.push_back(token);
 			}
 			token=input[i];
-
 			v1.push_back(token);
 			token="";
 		}
 		else if((boolean=Special_check(input,i)) > 1)
 		{
-			//token.pop_back();
-			//cout<<token<<endl;
-			special_string=Check_for_special_operator(input, &i, boolean);
-			//cout<<special_string<<endl;
+			special_string=Extract_special_operator(input, &i, boolean);
 			v1.push_back(token);
 			v1.push_back(special_string);
 			token="";
-			//v1.erase(v1.begin() + 0);
 		}
 		else if(Check_for_punctuation(input[i]) ==1 && input[i-1] ==' ')
 		{
@@ -153,7 +173,7 @@ vector<string> tokenizeCodeStrip(istream& code)
 		}
 		else if(Check_for_punctuation(input[i]) ==1 && input[i-1] !=' ')
 		{
-			if(input[i-1] !='"')
+			if(input[i-1] !='"' && token !=";")
 			{
 				token.pop_back();
 				v1.push_back(token);
@@ -163,13 +183,21 @@ vector<string> tokenizeCodeStrip(istream& code)
 			token="";
 		}
 	}
+	for(unsigned  int L=0; L <v1.size(); L++)
+	{
+		if(v1[L]== RemoveThis)
+		{
+			v1.at(L)="";
+		}
+		if(v1[L]==RemoveThis2)
+		{
+			v1.at(L)="";
+		}
+	}
 	v1=Exponent(v1);
-	//stream out to be tested by TestPart1
-	//v1.erase( v1.begin() + 0);
 	sizeofV1=v1.size();
 	for(int i=0; i< sizeofV1 ; i++)
 	{
-		//cout<<v1[i]<<endl;
 		answer.push_back(v1[i]);
 	}
 	v1.clear();
@@ -190,59 +218,6 @@ int Check_for_operator(char element)
 		}
 	}
 	return boolean;
-}
-string Check_for_special_operator(string element,int *index, int boolean)
-{
-	int i=*index;
-	int count=0;
-	int index2=0;
-	int sizeOfarrayChar=0;
-	int sizeOfelement=0;
-	int sizeOfarrayString=0;
-	char special_operator_char[]={'=','+','-','*','/','~','&','^','%', '<','>', '|'};//* is multiplication or indirection operator depending on context
-	string special_operator_string[] = {"++","--","+=", "-=","*=","==","/=",">>=","<<=","&=","^=","|="};
-	string special_string="";
-	//measure size
-	sizeOfarrayChar=sizeof(special_operator_char);
-	sizeOfelement=element.length();
-	sizeOfarrayString=sizeof(special_operator_string)/sizeof(special_operator_string[0]);
-	for(int u=0; u<sizeOfarrayChar; u++)
-	{
-		index2=element.find_first_of(special_operator_char[u]);
-		if(index2 !=-1)
-		{
-			break;
-		}
-	}
-	i=index2;
-	if(boolean == 2)
-	{
-		special_string=special_string+element[i];
-		special_string=special_string+element[i+1];
-		i=index2+1;
-	}
-	else if(boolean == 3)
-	{
-		special_string=special_string+element[i];
-		special_string=special_string+element[i+1];
-		special_string=special_string+element[i+2];
-		i=index2+2;
-
-		for(int j=0; j < sizeOfarrayString; j++)
-		{
-			if( special_string != special_operator_string[j] )
-			{
-				count++;
-			}
-		}
-		if(count == sizeOfarrayString)
-		{
-			special_string.pop_back();
-			i=index2+1;
-		}
-	}
-	*index=i;
-	return special_string;
 }
 int Check_for_punctuation(char element)
 {
@@ -284,6 +259,63 @@ string String_inside_Quotation(string input, int *index)
 		}
 	}
 }
+string Extract_special_operator(string element,int *index, int boolean)
+{
+	int i=*index;
+	int count=0;
+	int index2=0;
+	int sizeOfarrayChar=0;
+	int sizeOfelement=0;
+	int sizeOfarrayString=0;
+	char special_operator_char[]={'=','+','-','*','/','~','&','^','%', '<','>', '|'};//* is multiplication or indirection operator depending on context
+	string special_operator_string[] = {"++","--","+=", "-=","*=","==","/=",">>=","<<=","&=","^=","|="};
+	string special_string="";
+	//measure size
+	sizeOfarrayChar=sizeof(special_operator_char);
+	sizeOfelement=element.length();
+	sizeOfarrayString=sizeof(special_operator_string)/sizeof(special_operator_string[0]);
+	for(int u=0; u<sizeOfarrayChar; u++)
+	{
+		index2=element.find_first_of(special_operator_char[u], i);
+		if(index2 !=-1)
+		{
+			break;
+		}
+	}
+	i=index2;
+	if(boolean == 2)
+	{
+		special_string=special_string+element[i];
+		special_string=special_string+element[i+1];
+		i=index2+1;
+	}
+	else if(boolean == 3)
+	{
+		special_string=special_string+element[i];
+		special_string=special_string+element[i+1];
+		special_string=special_string+element[i+2];
+		i=index2+2;
+
+		for(int j=0; j < sizeOfarrayString; j++)
+		{
+			if( special_string != special_operator_string[j] )
+			{
+				count++;
+			}
+		}
+		if(count == sizeOfarrayString)
+		{
+			special_string.pop_back();
+			i=index2+1;
+		}
+	}
+	else if (boolean == -1)
+	{
+		cout<<"error"<<endl;
+	}
+	*index=i;
+	return special_string;
+}
 int Special_check(string element,int index)
 {
 	int special_operator_falg=0;
@@ -303,7 +335,6 @@ int Special_check(string element,int index)
 	{
 		for(int j=0; j<sizeOfarray; j++)
 		{
-				//cout<<i-index<<endl;
 				if(element[i] == special_operator_char[j])//need to fix this to include guard against =+, +-, =& and etc.Because these pass but shoudent
 				{
 					special_operator_falg++;
@@ -329,8 +360,10 @@ int Special_check(string element,int index)
 					boolean=-1;
 				}
 		}
+		//cout<<boolean<<endl;
 		count=0;
 		i++;
+
 	}
 	return boolean;
 }
@@ -349,6 +382,17 @@ string UnwantedString2(string input)
 {
 	std::string t = input;
 	std::string s = "MY_DEFINE";
+
+	std::string::size_type i = t.find(s);
+
+	if (i != std::string::npos)
+	   t.erase(i, s.length());
+	return t;
+}
+string UnwantedString4(string input)
+{
+	std::string t = input;
+	std::string s = "MYDEFINE";
 
 	std::string::size_type i = t.find(s);
 
@@ -433,4 +477,57 @@ vector<string> Exponent(vector<string> v1)
 		}
 	}
 	return v1;
+}
+string unterminated_strings(string input, string *RemoveThis)
+{
+	int sizeOfInput=0;
+	int count=0;
+	int count2=0;
+	int index2=0;
+	int index1=0;
+	int index3=0;
+	vector<int> index;
+
+	sizeOfInput=input.length();
+
+	for(int i=0; i< sizeOfInput; i++)
+	{
+		if(input[i]=='"')
+		{
+			count++;
+			index.push_back(i);
+		}
+	}
+	if(count % 2 ==1)
+	{
+		index2=input.find_first_of(';',index[0]);
+		input.insert(index2+1,1,'"');
+		*RemoveThis=input.substr(index[0], index2);
+		index1=(*RemoveThis).find_first_of('"');
+		index2=(*RemoveThis).find_last_of('"');
+		(*RemoveThis)=(*RemoveThis).substr(index1, index2+1);
+		cout<<endl;
+		cout<<"Warning: You have an interminated Double Quote String!!"<<endl;
+		cout<<endl;
+	}
+	return input;
+}
+string Remove_All_BackSlash_White_space(string input)
+{
+	for(unsigned int K=0; K< input.length();K++)
+	{
+		if(input[K]=='\r')
+		{
+			input.erase(input.begin()+K);
+		}
+		if(input[K]=='\n')
+		{
+			input.erase(input.begin()+K);
+		}
+		if(input[K]=='\t')
+		{
+			input.erase(input.begin()+K);
+		}
+	}
+	return input;
 }

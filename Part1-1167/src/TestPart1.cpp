@@ -67,6 +67,7 @@ void testTokenStrings(string codeString, vector<string> desiredTokenVector)
 
 
 
+
 BOOST_AUTO_TEST_CASE( test1 )
 {
 	testTokenStrings("sum = a + 10 ;",
@@ -95,8 +96,6 @@ BOOST_AUTO_TEST_CASE( test4 )
 
 
 
-
-
 BOOST_AUTO_TEST_CASE( test5 )
 {
 	testTokenStrings("i+++j;",
@@ -120,9 +119,9 @@ BOOST_AUTO_TEST_CASE( test7x )
             {  "str", "=", "\"x\"", "\"+\"", "\"\"", ";"});
 }
 
-/*// below demonstrates a bug in one of our libraries
+// below demonstrates a bug in one of our libraries
 
-BOOST_AUTO_TEST_CASE( test7bug )
+/*BOOST_AUTO_TEST_CASE( test7bug )
 {
     // the comment below shows what's in memory (but with extra whitespace
     //      to align things as much as possible) delimited by '[' and ']' and
@@ -165,11 +164,11 @@ BOOST_AUTO_TEST_CASE( test11 )
 
 
 
-/*BOOST_AUTO_TEST_CASE( test12 )
+BOOST_AUTO_TEST_CASE( test12 )
 {
-	testTokenStrings("str = \"Hello World out there ; \n str++;",
+	testTokenStrings("str = \"Hello World out there;  \n str++;",
 			{"str","=","","str","++",";"});
-}*/
+}
 
 
 
