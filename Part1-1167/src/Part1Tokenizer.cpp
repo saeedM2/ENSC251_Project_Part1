@@ -507,7 +507,7 @@ string unterminated_strings(string input, string *RemoveThis)
 		index2=(*RemoveThis).find_last_of('"');
 		(*RemoveThis)=(*RemoveThis).substr(index1, index2+1);
 		cout<<endl;
-		cout<<"Warning: You have an interminated Double Quote String!!"<<endl;
+		cout<<"Warning: You have an unterminated Double Quote String!!"<<endl;
 		cout<<endl;
 	}
 	return input;
