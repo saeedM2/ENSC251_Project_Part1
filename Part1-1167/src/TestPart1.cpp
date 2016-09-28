@@ -98,8 +98,8 @@ BOOST_AUTO_TEST_CASE( test4 )
 
 BOOST_AUTO_TEST_CASE( test5 )
 {
-	testTokenStrings("i+++j;",
-			{"i","++","+","j",";"});
+	testTokenStrings("i++-j;",
+			{"i","++","-","j",";"});
 }
 
 
@@ -170,6 +170,46 @@ BOOST_AUTO_TEST_CASE( test12 )
 			{"str","=","","str","++",";"});
 }
 
+BOOST_AUTO_TEST_CASE( test13 )
+{
+	testTokenStrings("i-=3;",
+			{"i","-=","3",";"});
+}
 
+BOOST_AUTO_TEST_CASE( test14 )
+{
+	testTokenStrings("Register_X &= 0b00001111;",
+			{"Register_X","&=","0b00001111",";"});
+}
 
+BOOST_AUTO_TEST_CASE( test15 )
+{
+	testTokenStrings("Register_X |= 0xFF;",
+			{"Register_X","|=","0xFF",";"});
+}
+
+BOOST_AUTO_TEST_CASE( test16 )
+{
+	testTokenStrings("Address >>= 0x0C;",
+			{"Address",">>=","0x0C",";"});
+}
+
+BOOST_AUTO_TEST_CASE( test17 )
+{
+	testTokenStrings("Address>>=0x0C;",
+			{"Address",">>=","0x0C",";"});
+}
+
+BOOST_AUTO_TEST_CASE( test18 )
+{
+
+	testTokenStrings("sumFloat = 314159E-5 + 12345e-3 + 12345e-3;",
+			{"sumFloat","=","314159E-5","+","12345e-3","+","12345e-3",";"});
+}
+
+BOOST_AUTO_TEST_CASE( test19 )
+{
+	testTokenStrings("Register_X&=0b00001111;",
+			{"Register_X","&=","0b00001111",";"});
+}
 
