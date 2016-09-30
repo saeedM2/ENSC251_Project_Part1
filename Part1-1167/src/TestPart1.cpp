@@ -252,7 +252,7 @@ BOOST_AUTO_TEST_CASE( test26 )
 BOOST_AUTO_TEST_CASE( test27)
 {
 
-	testTokenStrings("sumFloat = 314159E-5 + 12345e-3 + 12345e-3 ",
+	testTokenStrings("sumFloat=314159E-5+12345e-3+12345e-3 ",
 			{"sumFloat","=","314159E-5","+","12345e-3","+","12345e-3"});
 }
 
@@ -261,4 +261,16 @@ BOOST_AUTO_TEST_CASE( test28)
 
 	testTokenStrings("cout << ( i > j ? i : j ) << \" is greater.\" << endl; ",
 			{"cout","<<","(","i",">","j","?","i",":","j",")","<<","\" is greater.\"","<<","endl",";"});
+}
+BOOST_AUTO_TEST_CASE( test29)
+{
+
+	testTokenStrings("cout<<(i>j?i:j)<<\" is greater.\"<<endl;",
+			{"cout","<<","(","i",">","j","?","i",":","j",")","<<","\" is greater.\"","<<","endl",";"});
+}
+BOOST_AUTO_TEST_CASE( test30)
+{
+
+	testTokenStrings("if(value ==2 || value ==3) { }",
+			{"if","(","value","==","2","||","value","==","3",")","{","}"});
 }

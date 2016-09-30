@@ -133,13 +133,19 @@ vector<string> tokenizeCodeStrip(istream& code)
 		}
 		else if (input[i] == ' ' && Special_check(input, i) == -1)
 		{
-			token.pop_back();
+			if(token != "")
+			{
+				token.pop_back();
+			}
 			v1.push_back(token);
 			token = "";
 		}
 		else if (input[i] == *quote && squotetest == 1)
 		{
-			token.pop_back();
+			if(token != "")
+			{
+				token.pop_back();
+			}
 		}
 		else if (input[i] == '"')
 		{
@@ -156,8 +162,12 @@ vector<string> tokenizeCodeStrip(istream& code)
 		{
 			if (token.length() > 1)
 			{
-				token.pop_back();
+				if(token != "")
+				{
+					token.pop_back();
+				}
 				v1.push_back(token);
+				token = "";
 			}
 			token = input[i];
 			v1.push_back(token);
@@ -165,10 +175,16 @@ vector<string> tokenizeCodeStrip(istream& code)
 		}
 		else if ((boolean = Special_check(input, i)) > 1)
 		{
-			special_string = Extract_special_operator(input, &i, boolean);
-			v1.push_back(token);
-			v1.push_back(special_string);
-			token = "";
+			if(input[i - 1]  != ' ')
+			{
+				special_string = Extract_special_operator(input, &i, boolean);
+				if(Check_for_operator(token[0]) != 1)
+				{
+					v1.push_back(token);
+				}
+				v1.push_back(special_string);
+				token = "";
+			}
 		}
 		else if (Check_for_punctuation(input[i]) == 1 && input[i - 1] == ' ')
 		{
@@ -179,18 +195,30 @@ vector<string> tokenizeCodeStrip(istream& code)
 		{
 			if (input[i - 1] != '"' && token != ";")
 			{
-				token.pop_back();
-				v1.push_back(token);
-			}
-			if(Check_for_punctuation(input[i-1]) != 1)
-			{
-				token = input[i];
+				if(token != "")
+				{
+					token.pop_back();
+				}
 				v1.push_back(token);
 				token = "";
 			}
-			if(Check_for_punctuation(input[i-1]) == 1)
+			if(Check_for_punctuation(input[i-1]) != 1 )
+			{	if(token != "")
+				{
+					token.pop_back();
+					token = input[i];
+					v1.push_back(token);
+					token = "";
+				}
+				else if(token == "")
+				{
+					token = input[i];
+					v1.push_back(token);
+					token = "";
+				}
+			}
+			if(Check_for_punctuation(input[i-1]) == 1 )
 			{
-
 				token = input[i];
 				v1.push_back(token);
 				v1.erase(v1.begin()+i-2);//remove extra space
@@ -227,7 +255,7 @@ int Check_for_operator(char element)
 {
 	int boolean = 0;
 	int sizeOfarray = 0;
-	char operators[] = { '=', '+', '-', '*', '/', '~', '&', '^', '%', '|', '?' };
+	char operators[] = { '=', '+', '-', '*', '/', '~', '&', '^', '%', '|', '?' ,'>','<'};
 	//measure size
 	sizeOfarray = sizeof(operators);
 	for (int i = 0; i<sizeOfarray; i++)
@@ -451,7 +479,10 @@ vector<string> Remove_Any_RemainingSpaces(vector<string> v1)
 		sizeToken=token.length();
 		if(token[sizeToken-1] ==' ')
 		{
-			token.pop_back();
+			if(token != "")
+			{
+				token.pop_back();
+			}
 			v1.at(i)=token;
 		}
 	}
@@ -525,8 +556,6 @@ vector<string> Operator_with_three_char(vector<string> v1)
 	string token;
 	int pos1=0;
 	int pos2=0;
-	int pos3=0;
-	int pos4=0;
 	int index=0;
 	int sizeOfvector_v1=0;
 	//element.find_first_of(special_operator_char[u], i);
@@ -536,26 +565,31 @@ vector<string> Operator_with_three_char(vector<string> v1)
 	{
 		token=v1[i];
 		pos1=token.find_first_of('<');
-		pos2=token.find_first_of(">");
-		pos3=token.find_first_of('=',pos1);
-		pos4=token.find_first_of('=',pos2);
+		pos2=token.find_first_of('>');
+
 		if(pos1 >-1 || pos2 >-1)
 		{
-			if((pos1-pos3) == 1)
+			if(pos1 > -1)
 			{
-				index=i;
-				token=v1[i]+v1[i+1];
-				v1.erase(v1.begin()+index+1);
-				v1.at(i)=token;
-				break;
+				if(v1[i+1] =="=")
+				{
+					index=i;
+					token=v1[i]+v1[i+1];
+					v1.erase(v1.begin()+index+1);
+					v1.at(i)=token;
+					break;
+				}
 			}
-			else if((pos2-pos4) == 1)
+			else if(pos2 > -1)
 			{
-				index=i;
-				token=v1[i]+v1[i+1];
-				v1.erase(v1.begin()+index+1);
-				v1.at(i)=token;
-				break;
+				if(v1[i+1] =="=")
+				{
+					index=i;
+					token=v1[i]+v1[i+1];
+					v1.erase(v1.begin()+index+1);
+					v1.at(i)=token;
+					break;
+				}
 			}
 		}
 	}
