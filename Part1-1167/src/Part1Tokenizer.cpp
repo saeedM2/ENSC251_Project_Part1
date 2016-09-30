@@ -1,8 +1,8 @@
 //============================================================================
 //
-//% Student Name 1: student1
-//% Student 1 #: 123456781
-//% Student 1 userid (email): stu1 (stu1@sfu.ca)
+//% Student Name 1: Saeed Molaie
+//% Student 1 #:301189698
+//% Student 1 userid (email): smolaie@sfu.ca
 //
 //% Student Name 2: student2
 //% Student 2 #: 123456782
@@ -40,6 +40,7 @@
 
 using namespace std;
 
+//function declaration
 int Check_for_operator(char element);
 int Check_for_punctuation(char element);
 int Special_check(string element, int index);
@@ -47,18 +48,18 @@ string Extract_special_operator(string element, int *index, int output);
 string String_inside_Quotation(string input, int *index);
 vector<string> Exponent(vector<string> v1);
 vector<string> Remove_Any_RemainingSpaces(vector<string> v1);
+vector<string> Operator_with_three_char(vector<string> v1);
 string UnwantedString3(string input);
 string unterminated_strings(string input, string *RemoveThis);
 string Remove_All_BackSlash_White_space(string input);
 
 
+//Global variables
 bool squote(string input);
 const char *quote = "'";
 const char *space = " ";
 
 vector<string> tokenizeCodeStrip(istream& code); // declaration
-
-
 // end of eventual contents of file "Part1Tokenizer.h"
 // Accepts a stream and returns a vector of tokens with any remaining preprocessing directives stripped out
 // Input: a stream
@@ -74,13 +75,12 @@ vector<string> tokenizeCodeStrip(istream& code)
 	string special_string;
 	string RemoveThis;
 	string RemoveThis2;
-	vector<string> v1;
+	vector<string> v1;//v1 is a vector holding valid tokens
 	vector<string> answer;
 	int sizeOfString = 0;
 	int sizeofV1 = 0;
 	int boolean = 0;
 	int squotetest = 0;
-	int DefCheck;
 
 	//Save in Auxiliary variable input
 	while (getline(code, combine))
@@ -101,8 +101,8 @@ vector<string> tokenizeCodeStrip(istream& code)
 		{
 			if (input[K] == '\'')
 			{
-				input.at(K) = '`';
-				RemoveThis2 = '`';
+				input.at(K) = '`';//Detect flag `
+				RemoveThis2 = '`';//remove flag `
 				cout << endl;
 				cout << "Warning: You have an unterminated Single Quote String!!" << endl;
 				cout << endl;
@@ -117,10 +117,13 @@ vector<string> tokenizeCodeStrip(istream& code)
 			}
 		}
 	}
+	//remove white space: \n, \t, \r
 	input = Remove_All_BackSlash_White_space(input);
+	//remove unterminated string
 	input = unterminated_strings(input, &RemoveThis);
+	//get size of string stream
 	sizeOfString = input.length();
-	//Compare String against white space, operator, punctuation, directives
+
 	for (int i = 0; i<sizeOfString; i++)
 	{
 		token = token + input[i];
@@ -179,9 +182,20 @@ vector<string> tokenizeCodeStrip(istream& code)
 				token.pop_back();
 				v1.push_back(token);
 			}
-			token = input[i];
-			v1.push_back(token);
-			token = "";
+			if(Check_for_punctuation(input[i-1]) != 1)
+			{
+				token = input[i];
+				v1.push_back(token);
+				token = "";
+			}
+			if(Check_for_punctuation(input[i-1]) == 1)
+			{
+
+				token = input[i];
+				v1.push_back(token);
+				v1.erase(v1.begin()+i-2);//remove extra space
+				token = "";
+			}
 		}
 	}
 	for (unsigned int L = 0; L <v1.size(); L++)
@@ -195,8 +209,12 @@ vector<string> tokenizeCodeStrip(istream& code)
 			v1.at(L) = "";
 		}
 	}
-	v1 = Exponent(v1);
+	//Some additional operation on v1 to clean up the vector output
+	sizeofV1 = v1.size();
+	v1=Exponent(v1);
 	v1=Remove_Any_RemainingSpaces(v1);
+	v1=Operator_with_three_char(v1);
+
 	sizeofV1 = v1.size();
 	for (int i = 0; i< sizeofV1; i++)
 	{
@@ -225,7 +243,7 @@ int Check_for_punctuation(char element)
 {
 	int boolean = 0;
 	int sizeOfarray = 0;
-	char punctuation[] = { '(', ')', ':', ';', '*' };//* is multiplication or indirection operator depending on context
+	char punctuation[] = { '(', ')', ':', ';', '*','{','}','[',']' };//* is multiplication or indirection operator depending on context
 	//measure size
 	sizeOfarray = sizeof(punctuation);
 	for (int i = 0; i<sizeOfarray; i++)
@@ -256,29 +274,22 @@ string String_inside_Quotation(string input, int *index)
 		{
 			token = token + input[i];
 			*index = i;
-			return token;
 			break;
 		}
 	}
+	return token;
 }
 string Extract_special_operator(string element, int *index, int output)
 {
-
 	int i = *index;
-	int count = 0;
 	int count4SmallestIndex=0;
 	int index2 = 0;
 	int sizeOfarrayChar = 0;
-	int sizeOfelement = 0;
-	int sizeOfarrayString = 0;
-	char special_operator_char[] = { '=', '+', '-', '*', '/', '~', '&', '^', '%', '<', '>', '|' };//* is multiplication or indirection operator depending on context
-	string special_operator_string[] = { "++", "--", "+=", "-=", "*=", "==", "/=", ">>=", "<<=", "&=", "^=", "|=" };
+	char special_operator_char[] = { '=', '+', '-', '*', '/', '~', '&', '^', '%', '<', '>', '|' ,'!','?'};//* is multiplication or indirection operator depending on context
 	string special_string = "";
 	vector<int> smallestIndex;
 	//measure size
 	sizeOfarrayChar = sizeof(special_operator_char);
-	sizeOfelement = element.length();
-	sizeOfarrayString = sizeof(special_operator_string) / sizeof(special_operator_string[0]);
 	while(count4SmallestIndex < sizeOfarrayChar)
 	{
 		for (int u = count4SmallestIndex; u<sizeOfarrayChar; u++)
@@ -300,26 +311,6 @@ string Extract_special_operator(string element, int *index, int output)
 		special_string = special_string + element[i + 1];
 		i = index2 + 1;
 	}
-	else if (output == 3)
-	{
-		special_string = special_string + element[i];
-		special_string = special_string + element[i + 1];
-		special_string = special_string + element[i + 2];
-		i = index2 + 2;
-
-		for (int j = 0; j < sizeOfarrayString; j++)
-		{
-			if (special_string != special_operator_string[j])
-			{
-				count++;
-			}
-		}
-		if (count == sizeOfarrayString)
-		{
-			special_string.pop_back();
-			i = index2 + 1;
-		}
-	}
 	else if (output == -1)
 	{
 		cout << "error" << endl;
@@ -332,13 +323,12 @@ int Special_check(string element, int index)
 	int special_operator_falg = 0;
 	int output = 0;
 	int count = 0;
-	int count_index = 0;
 	int sizeOfarray = 0;
 	int sizeOfelement = 0;
 	int i = index;
-	int difference_check = index;
-	char special_operator_char[] = { '=', '+', '-', '*', '/', '~', '&', '^', '%', '<', '>', '|' };//* is multiplication or indirection operator depending on context
+	char special_operator_char[] = { '=', '+', '-', '*', '/', '~', '&', '^', '%', '<', '>', '|','!' ,'?'};//'*' is multiplication or indirection operator depending on context
 
+	//measure size of array and string
 	sizeOfarray = sizeof(special_operator_char);
 	sizeOfelement = element.length();
 
@@ -346,11 +336,11 @@ int Special_check(string element, int index)
 	{
 		for (int j = 0; j<sizeOfarray; j++)
 		{
-			if (element[i] == special_operator_char[j])//need to fix this to include guard against =+, +-, =& and etc.Because these pass but shoudent
+			if (element[i] == special_operator_char[j])
 			{
 				special_operator_falg++;
 			}
-			else if (element[i] != special_operator_char[j] && element[i])
+			else if (element[i] != special_operator_char[j])
 			{
 				count++;
 				if (count >= sizeOfarray && special_operator_falg == 1)
@@ -362,10 +352,6 @@ int Special_check(string element, int index)
 			{
 				output = 2;
 			}
-			else if (special_operator_falg == 3)
-			{
-				output = 3;
-			}
 			else if (special_operator_falg == 0)
 			{
 				output = -1;
@@ -373,15 +359,11 @@ int Special_check(string element, int index)
 		}
 		count = 0;
 		i++;
-
 	}
 	return output;
 }
-
 string UnwantedString3(string input)
 {
-	int sizeOfstring = 0;
-	sizeOfstring = input.length();
 	std::size_t foundfirst = input.find_first_of(*quote);
 	std::size_t foundfirstsc = input.find_first_of(';');
 	input.replace(input.begin() + (foundfirst + 1), input.begin() + foundfirstsc, "");
@@ -431,7 +413,10 @@ vector<string> Exponent(vector<string> v1)
 		{
 			if (flag_for_change_v1_size == 1)
 			{
-				indexVector.at(j) = indexVector[j] - 2;
+				for( int j=0; j < sizeIndexVector; j++)
+				{
+					indexVector.at(j) = indexVector[j] - 2;
+				}
 			}
 			else if (flag_for_change_v1_size == 2)
 			{
@@ -444,7 +429,6 @@ vector<string> Exponent(vector<string> v1)
 				v1.erase(v1.begin() + indexVector[j] + 1);
 				v1.erase(v1.begin() + indexVector[j] + 1);
 				flag_for_change_v1_size = 1;
-
 			}
 			else if (Check[0] != '+' && Check[0] != '-')
 			{
@@ -477,10 +461,8 @@ string unterminated_strings(string input, string *RemoveThis)
 {
 	int sizeOfInput = 0;
 	int count = 0;
-	int count2 = 0;
 	int index2 = 0;
 	int index1 = 0;
-	int index3 = 0;
 	vector<int> index;
 
 	sizeOfInput = input.length();
@@ -523,6 +505,59 @@ string Remove_All_BackSlash_White_space(string input)
 		{
 			input.erase(input.begin() + K);
 		}
+		if (input[K] == '\v')
+		{
+			input.erase(input.begin() + K);
+		}
+		if (input[K] == '\f')
+		{
+			input.erase(input.begin() + K);
+		}
+		if (input[K] == '\b')
+		{
+			input.erase(input.begin() + K);
+		}
 	}
 	return input;
+}
+vector<string> Operator_with_three_char(vector<string> v1)
+{
+	string token;
+	int pos1=0;
+	int pos2=0;
+	int pos3=0;
+	int pos4=0;
+	int index=0;
+	int sizeOfvector_v1=0;
+	//element.find_first_of(special_operator_char[u], i);
+	sizeOfvector_v1 = v1.size();
+
+	for(int i=0; i < sizeOfvector_v1; i++)
+	{
+		token=v1[i];
+		pos1=token.find_first_of('<');
+		pos2=token.find_first_of(">");
+		pos3=token.find_first_of('=',pos1);
+		pos4=token.find_first_of('=',pos2);
+		if(pos1 >-1 || pos2 >-1)
+		{
+			if((pos1-pos3) == 1)
+			{
+				index=i;
+				token=v1[i]+v1[i+1];
+				v1.erase(v1.begin()+index+1);
+				v1.at(i)=token;
+				break;
+			}
+			else if((pos2-pos4) == 1)
+			{
+				index=i;
+				token=v1[i]+v1[i+1];
+				v1.erase(v1.begin()+index+1);
+				v1.at(i)=token;
+				break;
+			}
+		}
+	}
+	return v1;
 }

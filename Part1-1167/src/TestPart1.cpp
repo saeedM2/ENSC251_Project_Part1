@@ -203,7 +203,7 @@ BOOST_AUTO_TEST_CASE( test17 )
 BOOST_AUTO_TEST_CASE( test18 )
 {
 
-	testTokenStrings("sumFloat = 314159E-5 + 12345e-3 + 12345e-3;",
+	testTokenStrings("sumFloat = 314159E-5 + 12345e-3 + 12345e-3 ;",
 			{"sumFloat","=","314159E-5","+","12345e-3","+","12345e-3",";"});
 }
 
@@ -213,3 +213,52 @@ BOOST_AUTO_TEST_CASE( test19 )
 			{"Register_X","&=","0b00001111",";"});
 }
 
+BOOST_AUTO_TEST_CASE( test20)
+{
+	testTokenStrings("*pointer=0;",
+			{"*","pointer","=","0",";"});
+}
+BOOST_AUTO_TEST_CASE( test21 )
+{
+	testTokenStrings("Register_X =| 0xFF;",
+			{"Register_X","=|","0xFF",";"});
+}
+BOOST_AUTO_TEST_CASE( test22 )
+{
+	testTokenStrings("if(x==2){}",
+			{"if","(","x","==","2",")","{","}"});
+}
+BOOST_AUTO_TEST_CASE( test23 )
+{
+	testTokenStrings("while(x != 2)",
+			{"while","(","x","!=","2",")"});
+}
+BOOST_AUTO_TEST_CASE( test24 )
+{
+	testTokenStrings("char* str; str = \"!!!!!!.\";"
+			,{"char", "*","str",";", "str","=","\"!!!!!!.\"",";"});
+}
+BOOST_AUTO_TEST_CASE( test25 )
+{
+	testTokenStrings("if(x==2) { }",
+			{"if","(","x","==","2",")","{","}"});
+}
+BOOST_AUTO_TEST_CASE( test26 )
+{
+	testTokenStrings("index = 1.575E1;",
+			{"index","=","1.575E1",";"});
+}
+
+BOOST_AUTO_TEST_CASE( test27)
+{
+
+	testTokenStrings("sumFloat = 314159E-5 + 12345e-3 + 12345e-3 ",
+			{"sumFloat","=","314159E-5","+","12345e-3","+","12345e-3"});
+}
+
+BOOST_AUTO_TEST_CASE( test28)
+{
+
+	testTokenStrings("cout << ( i > j ? i : j ) << \" is greater.\" << endl; ",
+			{"cout","<<","(","i",">","j","?","i",":","j",")","<<","\" is greater.\"","<<","endl",";"});
+}
