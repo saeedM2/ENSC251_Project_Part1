@@ -121,7 +121,8 @@ BOOST_AUTO_TEST_CASE( test7x )
 
 // below demonstrates a bug in one of our libraries
 
-/*BOOST_AUTO_TEST_CASE( test7bug )
+/*
+BOOST_AUTO_TEST_CASE( test7bug )
 {
     // the comment below shows what's in memory (but with extra whitespace
     //      to align things as much as possible) delimited by '[' and ']' and
@@ -129,7 +130,8 @@ BOOST_AUTO_TEST_CASE( test7x )
     //                 [#define MYDEFINE ? ?  str    =     "\""        "+"      ""     ; ]
 	testTokenStrings(  "#define MYDEFINE \r\n str    =    \"\\\"\"    \"+\"    \"\"    ; ",
 										  {  "str", "=", "\"\\\"\"", "\"+\"", "\"\"", ";"});
-}*/
+}
+*/
 
 
 
@@ -225,7 +227,7 @@ BOOST_AUTO_TEST_CASE( test21 )
 }
 BOOST_AUTO_TEST_CASE( test22 )
 {
-	testTokenStrings("if(x==2){}",
+	testTokenStrings("if(x==2) { }",
 			{"if","(","x","==","2",")","{","}"});
 }
 BOOST_AUTO_TEST_CASE( test23 )
@@ -262,15 +264,21 @@ BOOST_AUTO_TEST_CASE( test28)
 	testTokenStrings("cout << ( i > j ? i : j ) << \" is greater.\" << endl; ",
 			{"cout","<<","(","i",">","j","?","i",":","j",")","<<","\" is greater.\"","<<","endl",";"});
 }
+
 BOOST_AUTO_TEST_CASE( test29)
+{
+
+	testTokenStrings("if(value ==2 || value ==3) { }",
+			{"if","(","value","==","2","||","value","==","3",")","{","}"});
+}
+BOOST_AUTO_TEST_CASE( test30)
 {
 
 	testTokenStrings("cout<<(i>j?i:j)<<\" is greater.\"<<endl;",
 			{"cout","<<","(","i",">","j","?","i",":","j",")","<<","\" is greater.\"","<<","endl",";"});
 }
-BOOST_AUTO_TEST_CASE( test30)
+BOOST_AUTO_TEST_CASE( test31 )
 {
-
-	testTokenStrings("if(value ==2 || value ==3) { }",
-			{"if","(","value","==","2","||","value","==","3",")","{","}"});
+	testTokenStrings("if(x==2){}",
+			{"if","(","x","==","2",")","{","}"});
 }

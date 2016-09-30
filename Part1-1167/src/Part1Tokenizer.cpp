@@ -4,9 +4,9 @@
 //% Student 1 #:301189698
 //% Student 1 userid (email): smolaie@sfu.ca
 //
-//% Student Name 2: student2
-//% Student 2 #: 123456782
-//% Student 2 userid (email): stu2 (stu2@sfu.ca)
+//% Student Name 2: Gabe Teeger
+//% Student 2 #: 301261001
+//% Student 2 userid (email): gteeger@sfu.ca
 //
 //% Below, edit to list any people who helped you with the code in this file,
 //%      or put ‘none’ if nobody helped (the two of) you.
@@ -133,19 +133,13 @@ vector<string> tokenizeCodeStrip(istream& code)
 		}
 		else if (input[i] == ' ' && Special_check(input, i) == -1)
 		{
-			if(token != "")
-			{
-				token.pop_back();
-			}
+			token.pop_back();
 			v1.push_back(token);
 			token = "";
 		}
 		else if (input[i] == *quote && squotetest == 1)
 		{
-			if(token != "")
-			{
-				token.pop_back();
-			}
+			token.pop_back();
 		}
 		else if (input[i] == '"')
 		{
@@ -162,10 +156,7 @@ vector<string> tokenizeCodeStrip(istream& code)
 		{
 			if (token.length() > 1)
 			{
-				if(token != "")
-				{
-					token.pop_back();
-				}
+				token.pop_back();
 				v1.push_back(token);
 				token = "";
 			}
@@ -175,12 +166,27 @@ vector<string> tokenizeCodeStrip(istream& code)
 		}
 		else if ((boolean = Special_check(input, i)) > 1)
 		{
+
+			if(Check_for_punctuation(input[i-2]) == 1)
+			{
+				if(token.length() > 1 && token[1] !=' ')
+				{
+					token.pop_back();
+					v1.push_back(token);
+					token=input[i];
+					v1.push_back(token);
+					token="";
+				}
+			}
 			if(input[i - 1]  != ' ')
 			{
 				special_string = Extract_special_operator(input, &i, boolean);
 				if(Check_for_operator(token[0]) != 1)
 				{
-					v1.push_back(token);
+					if(token !="")
+					{
+						v1.push_back(token);
+					}
 				}
 				v1.push_back(special_string);
 				token = "";
@@ -195,27 +201,29 @@ vector<string> tokenizeCodeStrip(istream& code)
 		{
 			if (input[i - 1] != '"' && token != ";")
 			{
-				if(token != "")
+				token.pop_back();
+				if(Check_for_punctuation(input[i-1]) != 1)
 				{
-					token.pop_back();
+					if(token !="")
+					{
+						v1.push_back(token);
+					}
 				}
-				v1.push_back(token);
+				else if(Check_for_punctuation(input[i-1]) == 1)
+				{
+					v1.push_back(token);
+				}
 				token = "";
 			}
 			if(Check_for_punctuation(input[i-1]) != 1 )
-			{	if(token != "")
+			{
+				if(token.length()>1)
 				{
 					token.pop_back();
-					token = input[i];
-					v1.push_back(token);
-					token = "";
 				}
-				else if(token == "")
-				{
-					token = input[i];
-					v1.push_back(token);
-					token = "";
-				}
+				token = input[i];
+				v1.push_back(token);
+				token = "";
 			}
 			if(Check_for_punctuation(input[i-1]) == 1 )
 			{
@@ -479,10 +487,7 @@ vector<string> Remove_Any_RemainingSpaces(vector<string> v1)
 		sizeToken=token.length();
 		if(token[sizeToken-1] ==' ')
 		{
-			if(token != "")
-			{
-				token.pop_back();
-			}
+			token.pop_back();
 			v1.at(i)=token;
 		}
 	}
