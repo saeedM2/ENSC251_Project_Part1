@@ -282,3 +282,13 @@ BOOST_AUTO_TEST_CASE( test31 )
 	testTokenStrings("if(x==2){}",
 			{"if","(","x","==","2",")","{","}"});
 }
+BOOST_AUTO_TEST_CASE( test32 )
+{
+	testTokenStrings("Address <<= 0x0C;",
+			{"Address","<<=","0x0C",";"});
+}
+BOOST_AUTO_TEST_CASE( test33 )
+{
+	testTokenStrings("object.method(254);",
+			{"object",".","method","(","254",")",";"});
+}

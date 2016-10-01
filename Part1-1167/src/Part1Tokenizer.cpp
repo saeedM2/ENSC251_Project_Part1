@@ -149,20 +149,43 @@ vector<string> tokenizeCodeStrip(istream& code)
 		}
 		else if (Check_for_operator(input[i]) == 1 && input[i - 1] == ' ' && Special_check(input, i) == -1)
 		{
-			v1.push_back(token);
-			token = "";
-		}
-		else if (Check_for_operator(input[i]) == 1 && input[i + 1] != ' ' && Special_check(input, i) == -1)
-		{
-			if (token.length() > 1)
+			if(input[i] !='.')
 			{
-				token.pop_back();
 				v1.push_back(token);
 				token = "";
 			}
-			token = input[i];
-			v1.push_back(token);
-			token = "";
+			else if(input[i] =='.' && isdigit(input[i-1]) != 1 && isdigit(input[i+1]) != 1)
+			{
+				v1.push_back(token);
+				token = "";
+			}
+		}
+		else if (Check_for_operator(input[i]) == 1 && input[i + 1] != ' ' && Special_check(input, i) == -1)
+		{
+			if(input[i] !='.')
+			{
+				if (token.length() > 1)
+				{
+					token.pop_back();
+					v1.push_back(token);
+					token = "";
+				}
+				token = input[i];
+				v1.push_back(token);
+				token = "";
+			}
+			else if(input[i] =='.' && isdigit(input[i-1]) != 1 && isdigit(input[i+1]) != 1)
+			{
+				if (token.length() > 1)
+				{
+					token.pop_back();
+					v1.push_back(token);
+					token = "";
+				}
+				token = input[i];
+				v1.push_back(token);
+				token = "";
+			}
 		}
 		else if ((boolean = Special_check(input, i)) > 1)
 		{
@@ -225,11 +248,15 @@ vector<string> tokenizeCodeStrip(istream& code)
 				v1.push_back(token);
 				token = "";
 			}
-			if(Check_for_punctuation(input[i-1]) == 1 )
+			else if(Check_for_punctuation(input[i-1]) == 1)
 			{
 				token = input[i];
 				v1.push_back(token);
-				v1.erase(v1.begin()+i-2);//remove extra space
+				if(token !=";")
+				{
+					v1.erase(v1.begin()+i-2);
+				}
+				//v1.erase(v1.begin()+i-2);//remove extra space
 				token = "";
 			}
 		}
@@ -263,7 +290,7 @@ int Check_for_operator(char element)
 {
 	int boolean = 0;
 	int sizeOfarray = 0;
-	char operators[] = { '=', '+', '-', '*', '/', '~', '&', '^', '%', '|', '?' ,'>','<'};
+	char operators[] = { '=', '+', '-', '*', '/', '~', '&', '^', '%', '|', '?' ,'>','<',',','.'};
 	//measure size
 	sizeOfarray = sizeof(operators);
 	for (int i = 0; i<sizeOfarray; i++)
