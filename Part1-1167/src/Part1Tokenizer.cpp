@@ -8,25 +8,10 @@
 //% Student 2 #: 301261001
 //% Student 2 userid (email): gteeger@sfu.ca
 //
-//% Below, edit to list any people who helped you with the code in this file,
-//%      or put ‘none’ if nobody helped (the two of) you.
+// Helpers: Mohammad Akbari (TA)
 //
-// Helpers: _everybody helped us/me with the assignment (list names or put ‘none’)__
 //
-// Also, list any resources beyond the course textbook and the course pages on Piazza
-// that you used in making your submission.
-//
-// Resources:  ___________
-//
-//%% Instructions:
-//% * Put your name(s), student number(s), userid(s) in the above section.
-//% * Enter the above information in Test.cpp if you are submitting that file too.
-//% * Edit the "Helpers" line and "Resources" line.
-//% * Your group name should be "<userid1>_<userid2>" (eg. stu1_stu2)
-//% * Form groups as described at:  https://courses.cs.sfu.ca/docs/students
-//% * Submit one or two files to courses.cs.sfu.ca
-//
-// Name        : Part1.cpp
+// Name        : Part1Tokenizer.cpp
 // Description : Course Project Part 1 (Tokenizer)
 //============================================================================
 
@@ -35,13 +20,13 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include <cstddef>        // std::size_t
+#include <cstddef>        // needed for std::size_t
 #include <algorithm>
 
 using namespace std;
 
 //function declaration
-int Check_for_operator(char element);
+bool Check_for_operator(char element);
 int Check_for_punctuation(char element);
 int Special_check(string element, int index);
 string Extract_special_operator(string element, int *index, int output);
@@ -92,11 +77,11 @@ vector<string> tokenizeCodeStrip(istream& code)
 		}
 		input += combine;
 	}
-	squotetest = squote(input);
+	squotetest = squote(input); //tests whether an unterminated single quote exists in the input
 
-	if (squotetest == 1)
+	if (squotetest == 1) //if an unterminated single quote exists
 	{
-		input = UnwantedString3(input);
+		input = UnwantedString3(input);//removes the part of the string in between a single quote and the semicolon, including
 		for (unsigned int K = 0; K< input.length(); K++)
 		{
 			if (input[K] == '\'')
@@ -127,7 +112,7 @@ vector<string> tokenizeCodeStrip(istream& code)
 	for (int i = 0; i<sizeOfString; i++)
 	{
 		token = token + input[i];
-		if (token[0] == ' ')
+		if (token[0] == ' ') //if the first element in token is a space
 		{
 			token = "";
 		}
@@ -272,7 +257,7 @@ vector<string> tokenizeCodeStrip(istream& code)
 			v1.at(L) = "";
 		}
 	}
-	//Some additional operation on v1 to clean up the vector output
+	//Some additional operations on v1 to clean up the vector output
 	sizeofV1 = v1.size();
 	v1=Exponent(v1);
 	v1=Remove_Any_RemainingSpaces(v1);
@@ -286,7 +271,9 @@ vector<string> tokenizeCodeStrip(istream& code)
 	v1.clear();
 	return answer;
 }
-int Check_for_operator(char element)
+
+//Checks whether various single operators exist. If one exists, 1 is returned, otherwise 0 is returned by the function
+bool Check_for_operator(char element)
 {
 	int boolean = 0;
 	int sizeOfarray = 0;
@@ -302,6 +289,8 @@ int Check_for_operator(char element)
 	}
 	return boolean;
 }
+
+//Checks whether various punctuation marks exist. If one exists, 1 is returned, otherwise a zero is returned by the function
 int Check_for_punctuation(char element)
 {
 	int boolean = 0;
@@ -318,6 +307,8 @@ int Check_for_punctuation(char element)
 	}
 	return boolean;
 }
+
+//returns a token that is put into the output vector when there is a double quote present
 string String_inside_Quotation(string input, int *index)
 {
 	int counter = 0;
@@ -342,6 +333,8 @@ string String_inside_Quotation(string input, int *index)
 	}
 	return token;
 }
+
+//ensures that operators with 2 characters are treated as a single token (examples: ++, -+, etc.)
 string Extract_special_operator(string element, int *index, int output)
 {
 	int i = *index;
@@ -381,6 +374,8 @@ string Extract_special_operator(string element, int *index, int output)
 	*index = i;
 	return special_string;
 }
+
+//checks for operators that are consecutive more than once (==,+-...etc)
 int Special_check(string element, int index)
 {
 	int special_operator_falg = 0;
@@ -389,7 +384,7 @@ int Special_check(string element, int index)
 	int sizeOfarray = 0;
 	int sizeOfelement = 0;
 	int i = index;
-	char special_operator_char[] = { '=', '+', '-', '*', '/', '~', '&', '^', '%', '<', '>', '|','!' ,'?'};//'*' is multiplication or indirection operator depending on context
+	char special_operator_char[] = { '=', '+', '-', '*', '/', '~', '&', '^', '%', '<', '>', '|','!' ,'?', };//'*' is multiplication or indirection operator depending on context
 
 	//measure size of array and string
 	sizeOfarray = sizeof(special_operator_char);
@@ -425,6 +420,9 @@ int Special_check(string element, int index)
 	}
 	return output;
 }
+
+//Takes a string that was found to contain an unterminated single quote. This function deletes everything in between the single quote and the semicolon
+//This function also deletes the unterminated single quote.
 string UnwantedString3(string input)
 {
 	std::size_t foundfirst = input.find_first_of(*quote);
@@ -432,6 +430,9 @@ string UnwantedString3(string input)
 	input.replace(input.begin() + (foundfirst + 1), input.begin() + foundfirstsc, "");
 	return input;
 }
+
+//Checks whether a single quote is closed by another single quote.
+//If a second quote closes the first quote, zero is returned and if not a one is returned.
 bool squote(string input)
 {
 	size_t sizeOfstring = 0;
@@ -447,6 +448,9 @@ bool squote(string input)
 		return 0;
 	}
 }
+
+//ensures that an exponential number is treated properly as one string and is not incorrectly separated.
+//exponential parts of numbers are preceded by an e
 vector<string> Exponent(vector<string> v1)
 {
 	int sizeVector = v1.size();
@@ -503,6 +507,8 @@ vector<string> Exponent(vector<string> v1)
 	}
 	return v1;
 }
+
+//removes any unwanted whitespace in each string
 vector<string> Remove_Any_RemainingSpaces(vector<string> v1)
 {
 	string token;
@@ -520,6 +526,8 @@ vector<string> Remove_Any_RemainingSpaces(vector<string> v1)
 	}
 	return v1;
 }
+
+//removes everything after an unterminated double quote
 string unterminated_strings(string input, string *RemoveThis)
 {
 	int sizeOfInput = 0;
@@ -552,6 +560,8 @@ string unterminated_strings(string input, string *RemoveThis)
 	}
 	return input;
 }
+
+//removes all unwanted white space created by various 'escape sequences' (example \t, \n, etc.)
 string Remove_All_BackSlash_White_space(string input)
 {
 	for (unsigned int K = 0; K< input.length(); K++)
@@ -583,6 +593,8 @@ string Remove_All_BackSlash_White_space(string input)
 	}
 	return input;
 }
+
+//ensures that operators with 3 characters are treated correctly and not separated (example: <<=,>>=...etc)
 vector<string> Operator_with_three_char(vector<string> v1)
 {
 	string token;

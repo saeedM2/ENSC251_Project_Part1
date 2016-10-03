@@ -1,33 +1,19 @@
 //============================================================================
 //
-//% Student Name 1: student1
-//% Student 1 #: 123456781
-//% Student 1 userid (email): stu1 (stu1@sfu.ca)
+//% Student Name 1: Saeed Molaie
+//% Student 1 #:301189698
+//% Student 1 userid (email): smolaie@sfu.ca
 //
-//% Student Name 2: student2
-//% Student 2 #: 123456782
-//% Student 2 userid (email): stu2 (stu2@sfu.ca)
+//% Student Name 2: Gabe Teeger
+//% Student 2 #: 301261001
+//% Student 2 userid (email): gteeger@sfu.ca
 //
-//% Below, edit to list any people who helped you with the code in this file,
-//%      or put ‘none’ if nobody helped (the two of) you.
+// Helpers: Mohammad Akbari (TA)
 //
-// Helpers: _everybody helped us/me with the assignment (list names or put ‘none’)__
 //
-// Also, list any resources beyond the course textbook and the course pages on Piazza
-// that you used in making your submission.
 //
-// Resources:  ___________
-//
-//%% Instructions:
-//% * Put your name(s), student number(s), userid(s) in the above section.
-//% * Enter the above information in Test.cpp if you are submitting that file too.
-//% * Edit the "Helpers" line and "Resources" line.
-//% * Your group name should be "<userid1>_<userid2>" (eg. stu1_stu2)
-//% * Form groups as described at:  https://courses.cs.sfu.ca/docs/students
-//% * Submit one or two files to courses.cs.sfu.ca
-//
-// Name        : Part1.cpp
-// Description : Course Project Part 1 (Tokenizer)
+// Name        : TestPart1.cpp
+// Description : Course Project Part 1 (Test cases)
 // Original Version Copyright (c) 2016 Simon Fraser University
 //============================================================================
 
@@ -292,3 +278,9 @@ BOOST_AUTO_TEST_CASE( test33 )
 	testTokenStrings("object.method(254);",
 			{"object",".","method","(","254",")",";"});
 }
+BOOST_AUTO_TEST_CASE( test34 )
+{
+	testTokenStrings("int Special_check(string element,int index);",
+			{"int","Special_check","(","string","element",",","int","index",")",";"});
+}
+
